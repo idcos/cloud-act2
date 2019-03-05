@@ -1,0 +1,16 @@
+.idea/*
+cmd/*
+bin/*
+.vscode/*
+
+rpmbuild/*
+
+.scannerwork/*
+.sonarlint/*
+
+scripts/start-stop-daemon/start-stop-daemon
+src/idcos.io/cloud-act2/cmd/act2ctl/act2ctl
+src/idcos.io/cloud-act2/cmd/cloud-act2/cloud-act2-server
+
+pkg/*
+.cache/*

@@ -1,0 +1,9 @@
+[Unit]
+Description=cloud-act2-server
+Wants=network.target
+After=mysql.service
+[Service]
+Type=simple
+ExecStart=/app/cloud-act2/bin/cloud-act2-server -c /app/cloud-act2/etc/cloud-act2.yaml web start
+[Install]
+WantedBy=multi-user.target

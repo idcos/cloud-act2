@@ -1,0 +1,9 @@
+[Unit]
+Description=cloud-act2-event
+Wants=network.target
+After=salt-master
+[Service]
+Type=simple
+ExecStart=/app/saltstack/python/bin/python /app/cloud-act2/bin/salt-event -c /app/saltstack/etc/salt/master
+[Install]
+WantedBy=multi-user.target

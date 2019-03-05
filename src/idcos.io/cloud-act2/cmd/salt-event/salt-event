@@ -1,0 +1,47 @@
+#!/usr/bin/env python
+#coding=utf-8
+
+import argparse
+import requests
+import salt.config
+import salt.utils.event
+
+parser = argparse.ArgumentParser('transfer salt event to act2 server')
+parser.add_argument('-c', '--config', dest='config', help='salt master configuration', default='/etc/salt/master')
+parser.add_argument('-a', '--act2', dest='act2_proxy', help='act2 proxy address', default='http://127.0.0.1:5555')
+result = parser.parse_args()
+
+
+config = result.config
+if not config:
+    config = '/etc/salt/master'
+act2_proxy = result.act2_proxy
+
+act2_proxy = act2_proxy.rstrip('/')
+url = '%s/api/v1/salt/event' %(act2_proxy)
+
+opts = salt.config.client_config(config)
+
+events = salt.utils.event.get_event(
+        'master',
+        sock_dir=opts['sock_dir'],
+        transport=opts['transport'],
+        opts=opts)
+
+
+# record result
+def send_to_proxy(ret):
+    try:
+        resp = requests.post(url, json=ret, verify=False)
+        print(resp)
+    except Exception as e:
+        print(e)
+
+
+while True:
+    ret = events.get_event(full=True)
+    if ret is None:
+        continue
+
+    send_to_proxy(ret)
+

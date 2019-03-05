@@ -1,0 +1,154 @@
+# cloud-act2的配置
+
+### master的配置 ###
+############################
+is_master: true
+# 对外提供服务需要，监听的端口号，如果需要监听本地的，使用
+# 127.0.0.1:6868
+# 如果需要监听所有机器的，使用
+# :6868
+#port: ":6868"
+## 系统路径，
+## 项目相关的日志，配置，缓存文件都会放在次目录下
+#project_path: /usr/yunji
+## 缓存类型，目前master必须使用redis
+#cache_type: redis
+## 发布订阅所依赖的通道，目前只支持redis
+#pubsub: pub_sub
+
+## 加密类型,目前仅支持aead
+#crypto_type: aead
+## 密钥 必须是32位随机byte数据组再进行base64编码
+## 可以使用 head -c 32 /dev/urandom | base64 生成
+crypto_key: Uv38ByGCZU8WP18PmmIdcpVmx00QA3xNe7sEB9Hixkk=
+
+## https的相关配置，不开启https时此项可不配置
+#https:
+  ## 是否开启https，默认为false
+#  open: true
+  ## CA认证的crt文件 默认会读取/usr/yunji/cloud-act2/etc/cert/server.crt
+#  certFile: /usr/yunji/cloud-act2/etc/cert/server.crt
+  ## CA认证的key文件 默认会读取/usr/yunji/cloud-act2/etc/cert/server.key
+#  keyFile: /usr/yunji/cloud-act2/etc/cert/server.key
+
+#### mysql配置  ### 
+############################
+db:
+  host: 127.0.0.1
+  user: root
+  password: P@ssw0rd
+#  name: cloud-act2
+#  encoding: utf8mb4
+#  port: 3306
+#  debug: true
+#  pool_size: 64
+#  最大空隙大小
+#  poll_idle_size: 64
+  # 被重复使用之前的最大生命周期，默认单位:s
+#  conn_max_life_time: 60
+
+### master心跳监测定时任务配置
+#heartbeat:
+  ## 心跳检测超时时间间隔
+#  timeout_interval: 10m
+  ## 注册上报间隔
+#  register_interval: 30m
+
+
+## job超时时间
+#job_expire:
+  ## job超时的定时检测表达式
+#  timeout_interval: 30m
+  ## job超时时间，整数，单位 s
+#  expire: 10
+
+act2:
+  ## act2的master集群地址+端口，用于proxy回调使用
+  cluster_server: http://127.0.0.1:6868
+  ## 是否需要支持acl的模式，如果需要的话，则需要添加用户名和角色对应的关系
+#  acl: true
+  ## 提供认证方式，目前仅支持basic
+#  acl_auth: basic
+
+## 提供简单的acl_auth的用户名处理方式
+#acl_user:
+## 用户名
+#- name: damon
+#  # 用户名的密码，可以是一个随机值
+#  password: damonpass
+#  # 角色，需要和policy.csv中的角色名对应，一个用户可以有多个角色
+#  role:
+#  - root
+#- name: root
+#  password: ganyu
+#  role:
+#  - user
+
+
+#### 日志设定  ###
+############################
+# 日志文件路径地址
+log:
+  # 日志设置，默认为文件，支持 file, syslog, rsyslog
+#  facility: file
+  # 当日志为rsyslog的时候， rsyslog_protocol及rsyslog_server才生效，默认使用的是local6的通道，所以需要在
+  # /etc/rsyslog.conf中添加
+  # local6.*     /var/log/boot.log
+  # rsyslog_protocol，可以为tcp或udp
+#  rsyslog_protocol: "tcp"
+  # rsyslog_server，为ip:port形式
+#  rsyslog_server: "192.168.1.17:514"
+  # 业务相关的日志输出信息
+#  file: /tmp/cloud-act2/cloud-act2.log
+  # http请求的日志信息，不支持rotate
+#  http: /tmp/cloud-act2/cloud-http.log
+
+  # 日志的输出级别
+  # 支持：trace, debug, info, warning, error
+#  level: debug
+
+# 日志时间格式，2006-01-02T15:04:05:000000Z0700
+#   - datefmt: '2006-01-02 15:04:05'
+
+### redis连接配置
+redis:
+  # 是否采用集群方式
+  # cluster: true
+  addrs:
+    # master地址
+    master:
+      - server: "127.0.0.1"
+        port: 9001
+      - server: "127.0.0.1"
+        port: 9002
+      - server: "127.0.0.1"
+        port: 9003
+    # redis slaver地址
+    slaver:
+      - server: "127.0.0.1"
+        port: 9004
+      - server: "127.0.0.1"
+        port: 9005
+      - server: "127.0.0.1"
+        port: 9007
+
+  ## 密码
+#  password:
+  ## 最大空闲连接数
+#  max_idle:
+  ## 最大活动连接数
+#  max_active:
+  ## 关闭连接前的空闲时间
+#  idle_timeout:
+
+#### puppet集群设置  ### 
+############################
+
+# puppet-master:
+
+
+#### proxy集群设置  ### 
+############################
+# heartbeat-master:
+
+

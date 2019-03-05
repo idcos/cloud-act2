@@ -1,0 +1,33 @@
+{
+	"comment": "",
+	"ignore": "",
+	"package": [
+		{
+			"checksumSHA1": "TTXPoKCQXymhm++5bVYce7FuB0U=",
+			"path": "github.com/spf13/cobra",
+			"revision": "d2d81d9a96e23f0255397222bb0b4e3165e492dc",
+			"revisionTime": "2018-11-27T13:31:06Z",
+			"tree": true
+		},
+		{
+			"checksumSHA1": "eNMeMKBHf0EWzGM0gbpN16gckVQ=",
+			"path": "github.com/spf13/pflag",
+			"revision": "916c5bf2d89aff6fd3e10e7811337218dfa81cb5",
+			"revisionTime": "2018-12-12T14:01:01Z",
+			"tree": true
+		},
+		{
+			"checksumSHA1": "4vQAu2yY2Vzz9B+Ih+V/KuvW17Y=",
+			"path": "golang.org/x/crypto/chacha20poly1305",
+			"revision": "ff983b9c42bc9fbf91556e191cc8efb585c16908",
+			"revisionTime": "2018-07-25T11:53:45Z"
+		},
+		{
+			"checksumSHA1": "vwNzC3zLYY74W3btW3c/a2DRng8=",
+			"path": "golang.org/x/sys/cpu",
+			"revision": "48ac38b7c8cbedd50b1613c0fccacfc7d88dfcdf",
+			"revisionTime": "2019-01-09T08:27:30Z"
+		}
+	],
+	"rootPath": "idcos.io/cloud-act2"
+}

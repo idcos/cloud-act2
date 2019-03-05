@@ -1,0 +1,8 @@
+[Unit]
+Description=cloud-act2-server
+Wants=mysql.service
+[Service]
+Type=simple
+ExecStart=/usr/yunji/cloud-act2/bin/cloud-act2-server -c /usr/yunji/cloud-act2/etc/cloud-act2.yaml web start
+[Install]
+WantedBy=multi-user.target

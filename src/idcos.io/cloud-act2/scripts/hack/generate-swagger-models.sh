@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Here is details of the swagger binary we use.
+# $ swagger version
+# version: 0.12.0
+
+# Get the absolute path of this file
+DIR="$( cd "$( dirname "$0"  )" && pwd  )"
+
+swagger generate model -f "$DIR/../api/swagger.yml" -t "$DIR/../api" -m types

@@ -1,0 +1,10 @@
+# policy, role, resource, action
+p, user, /api/v1/version, GET
+p, user, /api/v1/ping, GET
+
+p, root, /api/v1/act2/*, (POST)|(GET)|(DELETE)
+
+p, root, /debug/*, GET
+
+g, root, user
+g, admin, root

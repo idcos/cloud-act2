@@ -1,0 +1,615 @@
+---
+swagger: "2.0"
+schemes:
+  - "http"
+  - "https"
+produces:
+  - "application/json"
+  - "text/plain"
+consumes:
+  - "application/json"
+  - "text/plain"
+basePath: "/api/v1"
+info:
+  title: "Cloud-Act2 API"
+  version: "0.6"
+  description: |
+    API is an HTTP API served by Cloud-Act2.
+
+paths:
+  /:
+    get:
+      summary: ""
+      description: "负载均衡的入口"
+      responses:
+        200:
+          description: "no error"
+          schema:
+            type: "string"
+            example: "OK"
+        500:
+          $ref: "#/responses/500ErrorResponse"
+
+  /job/ip/exec:
+    post:
+      summary: "通过IP远程执行脚本或者下发文件"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "no error" 
+          schema:
+            $ref: '#/definitions/AsyncJobRecordResult'
+        400:
+          description: "bad parameter"
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          $ref: "#/responses/500ErrorResponse"
+      parameters:
+        - name: "JobIPExecParam"
+          in: body
+          description: "params used for running job"
+          schema:
+            $ref: "#/definitions/JobIPExecParam"
+
+  /job/id/exec:
+    post:
+      summary: "通过entityId进行远程执行脚本或者下发文件"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "no error"
+          schema:
+            $ref: '#/definitions/AsyncJobRecordResult'
+        400:
+          description: "bad parameter"
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          $ref: "#/responses/500ErrorResponse"
+      parameters:
+        - name: "JobIDExecParam"
+          in: "body"
+          description: "用来执行的参数列表"
+          schema:
+            $ref: "#/definitions/JobIDExecParam"
+
+  /job/record:
+    get:
+      summary: "获取作业执行结果"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "no error"
+          schema:
+            $ref: '#/definitions/JobRecordInfo'
+        400:
+          description: "bad parameter"
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          $ref: "#/responses/500ErrorResponse"
+      parameters:
+        - in: "query"
+          name: "id"
+          type: "string"
+          description: "job record id"
+
+  /job/record/result:
+    get:
+      summary: "获取作业执行结果"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "no error"
+          schema:
+            $ref: '#/definitions/JobRecordResult'
+        400:
+          description: "bad parameter"
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          $ref: "#/responses/500ErrorResponse"
+      parameters:
+        - name: "id"
+          in: "query"
+          type: "string"
+          description: "job record id"
+
+  /job/record/page:
+    get:
+      summary: "获取作业执行列表"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "no error"
+          schema:
+            $ref: '#/definitions/JobRecordPagination'
+        400:
+          description: "bad parameter"
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          $ref: "#/responses/500ErrorResponse"
+      parameters:
+        - name: "pageNo"
+          in: "query"
+          description: "作业编号"
+          type: "integer"
+        - name: "pageSize"
+          in: "query"
+          type: "integer"
+          description: "作业大小"
+
+  /idc/all:
+    get:
+      summary: "获取所有的idc信息"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "no error"
+          schema:
+            $ref: '#/definitions/IDCInfo'
+        400:
+          description: "bad parameter"
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          $ref: "#/responses/500ErrorResponse"
+      
+  /idc/proxies:
+    get:
+      summary: "获取idc和代理服务器信息"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "no error"
+          schema:
+            $ref: '#/definitions/IDCProxyInfo'
+        400:
+          description: "bad parameter"
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          $ref: "#/responses/500ErrorResponse"
+
+
+  /idc/host:
+    get:
+      summary: "获取idc下的主机信息"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "no error"
+          schema:
+            $ref: '#/definitions/HostInfo'
+        400:
+          description: "bad parameter"
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          $ref: "#/responses/500ErrorResponse"
+      parameters:
+        - in: "query"
+          name: "idc"
+          type: "string"
+          description: "idc名称"
+
+  /idc/host/all:
+    get:
+      summary: "获取所有主机信息"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "no error"
+          schema:
+            $ref: '#/definitions/HostInfo'
+        400:
+          description: "bad parameter"
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          $ref: "#/responses/500ErrorResponse"
+
+
+definitions:
+  Error:
+    type: "object"
+    properties:
+      message:
+        type: string
+
+  SystemVersion:
+    type: "object"
+    properties:
+      apiVersion:
+        type: "string"
+        description: "Api Version held by daemon"
+        example: ""
+      gitCommit:
+        type: "string"
+        description: "Commit ID held by the latest commit operation"
+        example: ""
+      goVersion:
+        type: "string"
+        description: "version of Go runtime"
+        example: "1.8.3"
+      osType:
+        type: "string"
+        description: "Operating system type of underlying system"
+        example: "linux"
+      architecture:
+        type: "string"
+        description: "Arch type of underlying hardware"
+        example: "amd64"
+      buildTime:
+        type: "string"
+        description: "The time when this binary of daemon is built"
+        example: "2017-08-29T17:41:57.729792388+00:00"
+
+  AsyncJobRecordResult:
+    description: "作业执行时返回的异步信息"
+    type: "object"
+    properties:
+      status:
+        type: "string"
+      content:
+        type: "string"
+        description: "job record id"
+      message:
+        type: "string"
+
+  JobRecordInfo:
+    description: "执行作业的信息"
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        description: "job record id"
+      start_time:
+        type: "string"
+        description: "作业执行起始时间"
+      end_time:
+        type: "string"
+        description: "作业执行结束时间"
+      execute_status:
+        type: "string"
+        description: "作业执行状态, init|doing|done"
+      result_status:
+        type: "string"
+        description: "作业执行结果状态，cancelled|success|fail|timeout"
+      callback:
+        type: "string"
+        description: "作业执行的回调地址"
+      hosts:
+        type: "string"
+        description: "作业执行的主机列表"
+      provider:
+        type: "string"
+        description: "provider的"
+      script:
+        type: "string"
+        description: "作业执行的脚本"
+      script_type:
+        type: "string"
+        description: "脚本类型"
+      module_name:
+        type: "string"
+        description: "匹配方式"
+      timeout:
+        type: "integer"
+        description: "超时时间"
+      parameters:
+        type: "string"
+        description: "参数信息"
+
+  JobRecordResult:
+    type: "object"
+    description: "作业执行结果"
+    properties:
+      recordId:
+        type: "string"
+        description: "作业执行记录id"
+      hostIp:
+        type: "string"
+        description: "主机ip"
+      hostId:
+        type: "string"
+        description: "主机id"
+      entityId:
+        type: "string"
+        description: "系统id"
+      status:
+        type: "string"
+        description: "主机执行结果状态"
+      idcName:
+        type: "string"
+        description: "idc名称"
+      stdout:
+        type: "string"
+        description: "脚本执行的stdout"
+      stderr:
+        type: "string"
+        description: "脚本执行的stderr"
+      message:
+        type: "string"
+        description: "脚本执行的异常信息"
+      startTime:
+        type: "string"
+        description: "作业起始时间"
+      endTime:
+        type: "string"
+        description: "作业结束时间"
+
+  JobRecordPagination:
+    type: "object"
+    description: ""
+    properties:
+      pageNo:
+        type: "integer"
+        description: "页码"
+      pageSize:
+        type: "integer"
+        description: "页大小"
+      pageCount:
+        type: "integer"
+        description: "页数量"
+      totalCount:
+        type: "integer"
+        description: "总共数量"
+      list:
+        description: "结果列表"
+        type: "array"
+        items: 
+          $ref: "#/definitions/JobRecordItem"
+
+  JobIDExecParam:
+    description: |
+      通过主机ID进行远程执行
+    type: "object"
+    properties:
+      entityIds:
+        type: "array"
+        items:
+          type: "string"
+        description: "执行的主机列表"
+      execParam:
+        $ref: "#/definitions/ExecParam"
+      provider:
+        type: "string"
+        description: "提供者，可以是ssh|salt|puppet"
+      callback:
+        type: "string"
+        description: "http回调地址，任务执行结束后，会回调这个地址"
+      executeId:
+        type: "string"
+        description: "外部的执行id，可以通过这个id来进行调用之间的跟踪"
+
+
+  JobIPExecParam:
+    description: |
+      通过给予IP进行远程执行
+    type: "object"
+    properties:
+      execHosts:
+        type: "array"
+        items:
+          $ref: "#/definitions/ExecHost"
+        description: "执行的主机列表"
+      execParam: 
+        $ref: "#/definitions/ExecParam"
+      provider: 
+        type: "string"
+        description: "提供者，可以是ssh|salt|puppet"
+      callback: 
+        type: "string"
+        description: "http回调地址，任务执行结束后，会回调这个地址"
+      executeId: 
+        type: "string"      
+        description: "外部的执行id，可以通过这个id来进行调用之间的跟踪"
+
+
+  ExecHost:
+    description: "主机参数"
+    type: "object"
+    properties:
+      hostIp:
+        type: "string"
+        description: "ssh登陆的IP地址"
+      hostPort:
+        type: "string"
+        description: "ssh的端口，如果为空，为22端口"
+      entityId:
+        type: "string"
+        description: "系统的唯一id"
+      hostId:
+        type: "string"
+        description: "act2-master系统中的主机表中的id"
+      idcName:
+        type: "string"
+        description: "逻辑idc的名称，ssh使用时必须提供"
+      osType:
+        type: "string"
+        description: "系统类型，可以为windows|linux|aix"
+      encoding:
+        type: "string"
+        description: "系统默认的编码，如果为空，则默认以utf-8值进行处理"
+
+  ExecParam:
+    description: 命令执行时携带的参数信息
+    type: "object"
+    properties:
+      pattern:
+        type: "string"
+        description: 匹配的方式，模块名称，支持 script：脚本执行, salt.state：状态应用, file：文件下发. 
+      script:
+        type: "string"
+        description: |
+          依据模块名称进行解释
+          Pattern为script时，script为脚本内容
+          Pattern为salt.state时，script为salt的state内容
+          Pattern为file时，script为文件内容或url数组列表
+      scriptType:
+        type: "string"
+        description: |
+          依据pattern进行解释
+          pattern为script时，scriptType为shell, bash, bat, python
+          pattern为file时，scriptType为url或者text
+      params:
+        $ref: "#/definitions/ScriptParam"
+      runas:
+        type: "string"
+        description: "远程服务器上执行脚本的账户"
+      password:
+        type: "string"
+        description: "远程服务器上执行脚本的账户对应的密码，在通道为ssh的时候提供"
+      timeout:
+        type: "integer"
+        description: "脚本执行或者文件下发的超时时间，如果为0，则表示不超时"
+      env:
+        type: "object"
+        description: "脚本执行时的环境变量，保留"
+      extendData:
+        type: "object"
+        description:  "扩展数据，保留"
+
+  ScriptParam:
+    description: "脚本参数或者文件下发需要的参数"
+    type: "object"
+    properties:
+      args:
+        type: "string"
+        description: "脚本参数，如果是脚本的时候，需要提供"
+      target:
+        type: "string"
+        description: "文件下发的目标路径"
+
+  JobRecordItem:
+    description: "作业结果信息"
+    type: "object"
+    properties:
+      recordId:
+        type: "string"
+        description: "作业记录id"
+      hostIp:
+        type: "string"
+        description: "主机IP"
+      hostId:
+        type: "string"
+        description: "主机Id"
+      entityId:
+        type: "string"
+        description: "主机系统id"
+      startTime:
+        type: "string"
+        description: "开始时间"
+      endTime:
+        type: "string"
+        description: "结束时间"
+      status:
+        type: "string"
+        description: "状态"
+      idcName:
+        type: "string"
+        description: "idc的名字"
+      stdout:
+        type: "string"
+        description: "标准输出"
+      stderr:
+        type: "string"
+        description: "标准错误输出"
+      message:
+        type: "string"
+        description: "错误信息"
+
+  IDCInfo:
+    description: "IDC信息"
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        description: "id"
+      name:
+        type: "string"
+        description: "idc的名称"
+      addTime:
+        type: "string"
+        description: "idc入库时间"
+
+  IDCProxyInfo:
+    description: "IDC代理信息"
+    type: "object"
+    properties:
+      id: 
+        type: "string"
+        description: "idc的id"
+      server:
+        type: "string"
+        description: "代理服务器地址"
+      status:
+        type: "string"
+        description: "代理服务器状态"
+      idcName:
+        type: "string"
+        description: "idc名称"
+
+  HostInfo:
+    description: "主机信息"
+    type: "object"
+    properties:
+      hostId: 
+        type: "string"
+        description: "主机id"
+      hostIp:
+        type: "string"
+        description: "主机的ip信息"
+      entityId:
+        type: "string"
+        description: "主机的系统id"
+      idcId:
+        type: "string"
+        description: "idc的id"
+      idcName:
+        type: "string"
+        description: "idc名称"
+
+responses:
+  401ErrorResponse:
+    description: An unexpected 401 error occurred.
+    schema:
+      $ref: "#/definitions/Error"
+  404ErrorResponse:
+    description: An unexpected 404 error occurred.
+    schema:
+      $ref: "#/definitions/Error"
+  500ErrorResponse:
+    description: An unexpected server error occurred.
+    schema:
+      $ref: "#/definitions/Error"

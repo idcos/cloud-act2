@@ -1,0 +1,142 @@
+#### act2proxy  ###
+############################
+
+# 所在机房信息，英文名称，需要保证在部署的整个系统内保持唯一性
+# 一旦设定，后续不允许修改，所以务必需要保证产品持续可用
+idc: "#{IDC}"
+is_master: false
+# 通道类型，可以为salt|puppet，ssh为默认值支持的，不需要设置
+#channel_type: salt
+# 对外提供服务需要，监听的端口号，如果需要监听本地的，使用
+# 127.0.0.1:5555
+# 如果需要监听所有机器的，使用
+# :5555
+#port: 5555
+## 系统路径
+#project_path: /usr/yunji
+
+# 独立部署，独立部署时不会向act2-master上报
+#independent: true
+
+# 独立部署的时候，可能不需要依赖redis
+#depend_redis: true
+#cache_type: redis
+#pubsub: pub_sub
+
+## 加密类型,目前仅支持aead
+#crypto_type: aead
+## 密钥 必须是32位随机byte数据组再进行base64编码
+## 可以使用 head -c 32 /dev/urandom | base64 生成
+crypto_key: Uv38ByGCZU8WP18PmmIdcpVmx00QA3xNe7sEB9Hixkk=
+
+
+# salt服务器信息
+salt:
+  # salt账户
+#  username: "salt-api"
+  password: "UiuQWQuqmVsrQ5KJpi8pKQ=="
+  # salt所在的逻辑idc
+#  syspath: "/srv/salt"
+
+  # salt的api服务器
+#  server: http://127.0.0.1:8001
+#  python: /usr/bin/python
+  # salt的路径，默认为/usr/bin/salt
+#  salt_path: /usr/bin/salt
+  # salt配置文件目录位置
+#  salt_config: /etc/salt
+
+
+ssh:
+  # 密码方式，native或者uri方式或keyUri方式
+#  pass_method: native
+  # 密码方式的服务器地址，在pass_method为uri的时候使用，保留
+#  pass_server: http://localhost:5000
+  # 未使用，保留
+#  cache: /var/cache/act2
+#  ciphers:
+#    - aes128-ctr
+#    - aes192-ctr
+#    - aes256-ctr
+#    - aes128-cbc
+#    - 3des-cbc
+
+  lang:
+    - groovy
+
+# 当channel_type设置puppet的时候开启
+#puppet:
+#  rabbitmq: "amqp://mcollective:******@10.0.0.123:5672//mcollective"
+#  puppetdb: "http://10.0.0.123:8080"
+#  reply_queue: "damon_test"
+#  ruby: /opt/puppetlabs/puppet/bin/ruby
+
+
+act2:
+  ## act2的master集群地址+端口，用于proxy回调使用
+  ## act2_master_cluster_server为 ip:port
+  cluster_server: http://#{act2_master_cluster_server}
+  ## 文件反向代理的proxy的对外开放的地址
+  proxy_server: http://0.0.0.0:5555
+  ## 是否支持文件下发的反向代理通道
+#  file_reversed: true
+  ## 超时时间的修正值，必须大于0，默认3秒
+#  timeout_correction: 3
+  ## 上报延时时间，单位秒，同一个idc下的delay_report必须不同
+#  delay_report: 0
+  ## 重试机制，在服务器异常的情况下，在一定的时间间隔之后会继续回调上报执行结果，默认回调1次，回调时间间隔以2^n秒逐步递增
+#  result_call_retry: 1
+
+
+### master心跳监测定时任务配置
+#heartbeat:
+  ## 上报时间间隔，携带所有信息
+#  report_interval: 30s
+  ## 心跳注册上报间隔
+#  register_interval: 30m
+
+
+### redis连接配置
+redis:
+  cluster: true
+  addrs:
+    master:
+      - server: "127.0.0.1"
+        port: 9001
+      - server: "127.0.0.1"
+        port: 9002
+      - server: "127.0.0.1"
+        port: 9003
+    slaver:
+      - server: "127.0.0.1"
+        port: 9004
+      - server: "127.0.0.1"
+        port: 9005
+      - server: "127.0.0.1"
+        port: 9007
+
+  ## 密码
+#  password:
+  ## 最大空闲连接数
+#  max_idle:
+  ## 最大活动连接数
+#  max_active:
+  ## 关闭连接前的空闲时间
+#  idle_timeout:
+
+
+#### 日志设定  ###
+############################
+# 日志文件路径地址
+#log:
+  # 业务相关的日志输出信息
+#  file: /usr/yunji/cloud-act2/logs/cloud-act2-proxy.log
+  # http请求的日志信息，不支持rotate
+#  http: /tmp/cloud-act2/cloud-http.log
+
+  # 日志的输出级别
+  # 支持：trace, debug, info, warning, error
+#  level: debug
+
+# 日志时间格式 2006-01-02T15:04:05.000000Z0700
+#   - datefmt: '2006-01-02 15:04:05'

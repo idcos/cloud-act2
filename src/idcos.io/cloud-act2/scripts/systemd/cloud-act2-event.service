@@ -1,0 +1,9 @@
+[Unit]
+Description=cloud-act2-event
+Wants=network.target
+After=salt-master
+[Service]
+Type=simple
+ExecStart=/usr/yunji/cloud-act2/bin/salt-event
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Chat Example</title>
+    <script type="text/javascript">
+        window.onload = function () {
+            var conn;
+            var jobRecordID = document.getElementById("jobRecordID");
+            var entityID = document.getElementById("entityID");
+
+            function appendLog(item) {
+                var doScroll = log.scrollTop > log.scrollHeight - log.clientHeight - 1;
+                log.appendChild(item);
+                if (doScroll) {
+                    log.scrollTop = log.scrollHeight - log.clientHeight;
+                }
+            }
+
+            function flushLog(text) {
+                var log = document.getElementById('log')
+                log.innerText = text
+            }
+
+            document.getElementById("form").onsubmit = function () {
+                if (!jobRecordID.value) {
+                    return false;
+                }
+                if (!entityID.value) {
+                    return false;
+                }
+                send(jobRecordID.value, entityID.value)
+                return false;
+            };
+
+            function send(jobRecordID, entityID) {
+                console.log(jobRecordID, entityID)
+                if (window["WebSocket"]) {
+                    conn = new WebSocket("ws://192.168.1.17:6868/api/v1/ws/record?jobRecordID=" + jobRecordID + "&entityID=" + entityID);
+                    console.log("url: " + conn.url)
+                    conn.onclose = function (evt) {
+                        var item = document.createElement("div");
+                        item.innerHTML = "<b>Connection closed.</b>";
+                        appendLog(item);
+                    };
+                    conn.onmessage = function (evt) {
+                        flushLog(evt.data)
+
+                        // var messages = evt.data.split('\n');
+                        // for (var i = 0; i < messages.length; i++) {
+                        //     var item = document.createElement("div");
+                        //     item.innerText = messages[i];
+                        //     appendLog(item);
+                        // }
+                    };
+                } else {
+                    var item = document.createElement("div");
+                    item.innerHTML = "<b>Your browser does not support WebSockets.</b>";
+                    appendLog(item);
+                }
+            }
+
+        };
+
+
+    </script>
+    <style type="text/css">
+        html {
+            overflow: hidden;
+        }
+
+        body {
+            overflow: hidden;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            background: gray;
+        }
+
+        #log {
+            background: white;
+            margin: 0;
+            padding: 0.5em 0.5em 0.5em 0.5em;
+            position: absolute;
+            top: 0.5em;
+            left: 0.5em;
+            right: 0.5em;
+            bottom: 3em;
+            overflow: auto;
+        }
+
+        #form {
+            padding: 0 0.5em 0 0.5em;
+            margin: 0;
+            position: absolute;
+            bottom: 1em;
+            left: 0px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+    </style>
+</head>
+<body>
+<div id="log"></div>
+<form id="form">
+    jobRecordID <input type="text" id="jobRecordID" size="64"/>
+    entityID <input type="text" id="entityID" size="64"/>
+    <input type="submit" value="Send"/>
+</form>
+</body>
+</html>
